@@ -1,0 +1,54 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Cavallo extends Thread {
+    private String nome;
+    private int velocita; // Metri percorsi al secondo
+    private int distanzaPercorsa = 0;
+    private int lunghezzaGara;
+    private boolean infortunato = false;
+
+    public Cavallo(String nome, int velocita, int lunghezzaGara) {
+        this.nome = nome;
+        this.velocita = velocita;
+        this.lunghezzaGara = lunghezzaGara;
+    }
+
+    @Override
+    public void run() {
+        Random random = new Random();
+        while (distanzaPercorsa < lunghezzaGara && !infortunato) {
+            // Verifica infortunio
+            if (random.nextInt(100) < 5) { // 5% di possibilità di infortunio ad ogni ciclo
+                infortunato = true;
+                System.out.println(nome + " si è infortunato e ha abbandonato la gara!");
+                break;
+            }
+            
+            // Avanza di "velocità" metri al secondo
+            distanzaPercorsa = Math.min(distanzaPercorsa + velocita, lunghezzaGara);
+            System.out.println(nome + " ha percorso " + distanzaPercorsa + " metri.");
+            
+            try {
+                Thread.sleep(1000); // Pausa di 1 secondo
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+        
+        if (!infortunato) {
+            System.out.println(nome + " ha terminato la gara con " + distanzaPercorsa + " metri percorsi.");
+        }
+    }
+
+    public int getDistanzaPercorsa() {
+        return distanzaPercorsa;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
